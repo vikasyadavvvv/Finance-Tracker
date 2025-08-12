@@ -1,0 +1,20 @@
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "http://localhost:5000/api",
+});
+
+// Attach token to requests
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export const registerUser = (data) => API.post("/auth/register", data);
+export const loginUser = (data) => API.post("/auth/login", data);
+
+export const getTransactions = () => API.get("/transactions");
+export const addTransaction = (data) => API.post("/transactions", data);
+export const updateTransaction = (id, data) => API.put(`/transactions/${id}`, data);
+export const deleteTransaction = (id) => API.delete(`/transactions/${id}`);
