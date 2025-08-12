@@ -54,7 +54,7 @@ PORT=5000
 
 ### 1. Clone the Repository  
 ```bash
-git clone https://github.com/yourusername/finance-tracker.git
+git clone https://github.com/vikasyadavvvv/Finance-Tracker.git
 cd finance-tracker
 cd backend
 npm install
