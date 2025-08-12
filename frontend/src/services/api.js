@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://finance-tracker-delta-beige.vercel.app/api",
 });
 
 // Attach token to requests
