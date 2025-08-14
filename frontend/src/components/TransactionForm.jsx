@@ -12,6 +12,7 @@ export default function TransactionForm({ onAdd }) {
     date: "",
   });
   const [isAdding, setIsAdding] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,9 +20,18 @@ export default function TransactionForm({ onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await addTransaction(form);
-    onAdd();
-    setForm({ type: "income", amount: "", category: "", note: "", date: "" });
+    setIsAdding(true);
+    setError("");
+    
+    try {
+      await addTransaction(form);
+      onAdd();
+      setForm({ type: "income", amount: "", category: "", note: "", date: "" });
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to add transaction");
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -31,6 +41,13 @@ export default function TransactionForm({ onAdd }) {
         Add New Transaction
       </h2>
       
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4 flex items-center">
+          <FaMoneyBillWave className="mr-2" />
+          {error}
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
         {/* Transaction Type */}
         <div className="relative">
@@ -39,6 +56,7 @@ export default function TransactionForm({ onAdd }) {
             value={form.type} 
             onChange={handleChange} 
             className="w-full pl-3 pr-8 py-2 border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none"
+            disabled={isAdding}
           >
             <option value="income">Income</option>
             <option value="expense">Expense</option>
@@ -64,6 +82,7 @@ export default function TransactionForm({ onAdd }) {
             placeholder="Amount" 
             className="w-full pl-8 pr-3 py-2 border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent" 
             required 
+            disabled={isAdding}
           />
         </div>
 
@@ -79,6 +98,7 @@ export default function TransactionForm({ onAdd }) {
             onChange={handleChange} 
             placeholder="Category" 
             className="w-full pl-10 pr-3 py-2 border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent" 
+            disabled={isAdding}
           />
         </div>
 
@@ -94,6 +114,7 @@ export default function TransactionForm({ onAdd }) {
             onChange={handleChange} 
             placeholder="Note" 
             className="w-full pl-10 pr-3 py-2 border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent" 
+            disabled={isAdding}
           />
         </div>
 
@@ -108,36 +129,37 @@ export default function TransactionForm({ onAdd }) {
             value={form.date} 
             onChange={handleChange} 
             className="w-full pl-10 pr-3 py-2 border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent" 
+            disabled={isAdding}
           />
         </div>
 
         {/* Submit Button */}
-      <button
-  type="submit"
-  className="w-full bg-gradient-to-r from-emerald-600 to-amber-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition-opacity flex items-center justify-center"
-  disabled={isAdding} // Disable during loading
->
-  {isAdding ? (
-    <>
-      <svg 
-        className="animate-spin h-5 w-5 text-white" 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24"
-      >
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <span className="hidden sm:inline ml-2">Adding...</span>
-    </>
-  ) : (
-    <>
-      <FaPlus className="mr-2" />
-      <span className="hidden sm:inline">Add</span>
-    </>
-  )}
-</button>
-</div>
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-emerald-600 to-amber-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition-opacity flex items-center justify-center disabled:opacity-75 disabled:cursor-not-allowed"
+          disabled={isAdding}
+        >
+          {isAdding ? (
+            <>
+              <svg 
+                className="animate-spin h-5 w-5 text-white" 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span className="hidden sm:inline ml-2">Adding...</span>
+            </>
+          ) : (
+            <>
+              <FaPlus className="mr-2" />
+              <span className="hidden sm:inline">Add</span>
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

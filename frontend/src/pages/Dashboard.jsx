@@ -7,6 +7,7 @@ import StatsChart from "../components/StatsChart";
 
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([]);
+  const [userEmail, setUserEmail] = useState("");
 
   const fetchData = async () => {
     const { data } = await getTransactions();
@@ -25,13 +26,24 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
+    // Get user email from localStorage
+    const email = localStorage.getItem("userEmail") || "";
+    setUserEmail(email);
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-amber-50">
       <Navbar />
       <div className="p-4 container mx-auto">
-        {/* Mobile: Stacked layout - simplified without bottom nav */}
+        {/* Welcome Banner with email */}
+        <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border border-emerald-100">
+          <h1 className="text-2xl font-bold text-emerald-800">
+            Welcome back, <span className="text-amber-600">{userEmail}</span>!
+          </h1>
+          <p className="text-gray-600">Manage your finances efficiently</p>
+        </div>
+
+        {/* Mobile: Stacked layout */}
         <div className="block md:hidden space-y-6 pb-6">
           <StatsChart transactions={transactions} />
           <TransactionForm onAdd={fetchData} />
@@ -47,7 +59,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
             <TransactionForm onAdd={fetchData} />
             <TransactionTable
-            className="pb-5"
+              className="pb-5"
               transactions={transactions}
               onDelete={handleDelete}
               onUpdate={handleUpdate}

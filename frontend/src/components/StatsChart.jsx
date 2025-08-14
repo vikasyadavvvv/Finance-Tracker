@@ -58,7 +58,7 @@ export default function StatsChart({ transactions }) {
             const value = context.raw || 0;
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
             const percentage = Math.round((value / total) * 100);
-            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+            return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
           },
         },
       },
